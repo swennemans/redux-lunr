@@ -1,0 +1,40 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/sven/.nvm/versions/io.js/v2.0.0/bin/iojs',
+1 verbose cli   '/Users/sven/.nvm/versions/io.js/v2.0.0/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'start' ]
+2 info using npm@2.9.0
+3 info using node@v2.0.0
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info prestart react-tdd-tape@0.0.1
+6 info start react-tdd-tape@0.0.1
+7 verbose unsafe-perm in lifecycle true
+8 info react-tdd-tape@0.0.1 Failed to exec start script
+9 verbose stack Error: react-tdd-tape@0.0.1 start: `node devServer.js`
+9 verbose stack Exit status 1
+9 verbose stack     at EventEmitter.<anonymous> (/Users/sven/.nvm/versions/io.js/v2.0.0/lib/node_modules/npm/lib/utils/lifecycle.js:213:16)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at EventEmitter.emit (events.js:169:7)
+9 verbose stack     at ChildProcess.<anonymous> (/Users/sven/.nvm/versions/io.js/v2.0.0/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at ChildProcess.emit (events.js:169:7)
+9 verbose stack     at maybeClose (child_process.js:953:16)
+9 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1020:5)
+10 verbose pkgid react-tdd-tape@0.0.1
+11 verbose cwd /Users/sven/Documents/dev/redux-lunr/src
+12 error Darwin 15.0.0
+13 error argv "/Users/sven/.nvm/versions/io.js/v2.0.0/bin/iojs" "/Users/sven/.nvm/versions/io.js/v2.0.0/bin/npm" "run" "start"
+14 error node v2.0.0
+15 error npm  v2.9.0
+16 error code ELIFECYCLE
+17 error react-tdd-tape@0.0.1 start: `node devServer.js`
+17 error Exit status 1
+18 error Failed at the react-tdd-tape@0.0.1 start script 'node devServer.js'.
+18 error This is most likely a problem with the react-tdd-tape package,
+18 error not with npm itself.
+18 error Tell the author that this fails on your system:
+18 error     node devServer.js
+18 error You can get their info via:
+18 error     npm owner ls react-tdd-tape
+18 error There is likely additional logging output above.
+19 verbose exit [ 1, true ]
