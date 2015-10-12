@@ -17,15 +17,11 @@
     "watch-test": "npm run watch -s"
   },
   "author": "Sven Roeterdink",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "catiline": "^2.9.3",
     "express": "^4.13.3",
-    "lodash.debounce": "^3.1.1",
     "lunr": "^0.5.12",
-    "operative": "^0.4.4",
     "react": "^0.13.3",
-    "react-debounce-input": "^1.1.4",
     "react-redux": "^3.0.1",
     "redux": "^3.0.2",
     "redux-logger": "^2.0.3",

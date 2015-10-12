@@ -1,6 +1,6 @@
 import {
-    LOAD_STATE_INTO_INDEX
-    LOAD_DOCS_INTO_INDEX,
+    LUNR_INDEX_STATE
+    LUNR_INDEX_DOCS,
     } from './constants.js';
 
 

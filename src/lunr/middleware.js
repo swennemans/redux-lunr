@@ -6,12 +6,12 @@ var worker = new Worker();
 import lunr from 'lunr';
 
 import {
-    LOAD_STATE_INTO_INDEX,
-    LOAD_DOCS_INTO_INDEX,
-    LOAD_DOCS_SUCCESS,
+    LUNR_INDEX_STATE,
+    LUNR_INDEX_DOCS,
+    LUNR_INDEX_DOCS_SUCCESS,
     LUNR_SEARCH_START,
     LUNR_SEARCH_SUCCESS,
-    LOAD_STATE_INTO_INDEX_SUCCESS
+    LUNR_INDEX_STATE_SUCCESS
     } from './constants.js';
 
 function UnreconizedActionTypeException(message) {
@@ -51,8 +51,6 @@ function createLunrIndex(options) {
  */
 function addToIndex(_toIndex, options) {
   const {background} = options;
-
-  console.log('toIndex', _toIndex);
 
   /* Wrap in promise because webworker returns async */
   return new Promise(
@@ -163,22 +161,22 @@ export default function createLunrMiddleware(options) {
 
 
       switch (type) {
-        case LOAD_DOCS_INTO_INDEX:
+        case  LUNR_INDEX_DOCS:
           next(actionWith(searchLunr));
 
           let docs = addToStore(addToIndex(_toIndex));
           dispatch({
-            type: LOAD_DOCS_SUCCESS,
+            type: LUNR_INDEX_DOCS_SUCCESS,
             docs
           });
           break;
-        case LOAD_STATE_INTO_INDEX:
+        case  LUNR_INDEX_STATE:
           next(actionWith(searchLunr));
 
           addToIndex(getDataFromState(options, getState), options)
               .then((res) => {
                 dispatch({
-                  type: LOAD_STATE_INTO_INDEX_SUCCESS,
+                  type: LUNR_INDEX_STATE_SUCCESS,
                   searchIndex: res
                 });
               }).catch((err) => {

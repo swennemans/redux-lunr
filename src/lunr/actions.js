@@ -1,6 +1,6 @@
 import {
-    LOAD_DOCS_INTO_INDEX,
-    LOAD_STATE_INTO_INDEX,
+    LUNR_INDEX_DOCS,
+    LUNR_INDEX_STATE,
     LUNR_SEARCH_START,
     } from './constants.js'
 
@@ -9,7 +9,7 @@ import {SEARCH_LUNR} from './middleware.js'
 export function loadDocsIntoIndex(docs) {
   return {
     [SEARCH_LUNR]: {
-      type: LOAD_DOCS_INTO_INDEX,
+      type: LUNR_INDEX_DOCS,
       _toIndex: docs
     }
   }
@@ -17,7 +17,7 @@ export function loadDocsIntoIndex(docs) {
 export function loadStateIntoIndex(state) {
   return {
     [SEARCH_LUNR]: {
-      type: LOAD_STATE_INTO_INDEX
+      type: LUNR_INDEX_STATE
     }
   }
 }
