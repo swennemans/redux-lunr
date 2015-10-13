@@ -161,12 +161,15 @@ export default function createLunrMiddleware(options) {
       switch (type) {
         case  LUNR_INDEX_DOCS:
           next(actionWith(searchLunr));
-
-          let docs = addToStore(addToIndex(_toIndex));
-          dispatch({
-            type: LUNR_INDEX_DOCS_SUCCESS,
-            docs
-          });
+            addToIndex(_toIndex, options).then((value) => {
+              let docs = addToStore(value)
+              dispatch({
+                type: LUNR_INDEX_DOCS_SUCCESS,
+                docs
+              });
+            }).catch((err) => {
+              throw new Error(err)
+            });
           break;
         case  LUNR_INDEX_STATE:
           next(actionWith(searchLunr));
