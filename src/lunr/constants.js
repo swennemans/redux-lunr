@@ -6,8 +6,8 @@ export const LUNR_INDEX_STATE_SUCCESS = 'LUNR_INDEX_STATE_SUCCESS';
 /* Load predefined (fetched from server?) array of docs into index
  *  takes this array as argument.
  * */
-export const LUNR_INDEX_DOCS = 'LOAD_DOCS_INTO_INDEX';
-export const LOAD_INDEX_DOCS_SUCCESS = 'LOAD_DOCS_INTO_INDEX_SUCCESS';
+export const LUNR_INDEX_DOCS = 'LUNR_INDEX_DOCS';
+export const LOAD_INDEX_DOCS_SUCCESS = 'LOAD_INDEX_DOCS_SUCCESS';
 
 //export const
 

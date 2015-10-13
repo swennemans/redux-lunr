@@ -1,8 +1,6 @@
-var Worker = require("./worker.wrk.js");
-var worker = new Worker();
-//worker.onmessage = function(e) {
-//  console.log('message', e);
-//}
+//var Worker = require("./worker.wrk.js");
+//var worker = new Worker();
+
 import lunr from 'lunr';
 
 import {

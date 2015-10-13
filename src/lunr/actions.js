@@ -25,8 +25,8 @@ export function lunrStartSearch(query, limit) {
   return {
     [SEARCH_LUNR]: {
       type: LUNR_SEARCH_START,
-      _query: query,
-      _limit: limit
+      _query: query ? query: false,
+      _limit: limit ? limit: false
     }
   }
 }
