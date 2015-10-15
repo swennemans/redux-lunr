@@ -1,13 +1,16 @@
-import React from 'react';
-import App from './Containers/App';
-import { Provider } from 'react-redux';
+import {
+    loadDocsIntoIndex,
+    loadStateIntoIndex,
+    lunrStartSearch
+    } from './actions.js'
 
-import configureStore from '../src/store/configureStore.js'
-const store = configureStore();
+import createLunrMiddleware from './middleware.js';
+import lunrReducer from './reducer.js';
 
-React.render(
-    <Provider store={store}>
-      {() => <App />}
-    </Provider>,
-    document.getElementById('root')
-);
+export {
+    loadDocsIntoIndex,
+    loadStateIntoIndex,
+    lunrStartSearch,
+    createLunrMiddleware,
+    lunrReducer
+    }
