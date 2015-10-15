@@ -1,5 +1,5 @@
-//var Worker = require("./worker.wrk.js");
-//var worker = new Worker();
+var Worker = require("./worker.wrk.js");
+var worker = new Worker();
 
 import lunr from 'lunr';
 
@@ -9,8 +9,7 @@ import {
     LUNR_INDEX_DOCS_SUCCESS,
     LUNR_SEARCH_START,
     LUNR_SEARCH_SUCCESS,
-    LUNR_INDEX_STATE_SUCCESS,
-    LUNR_PRETTIFY_RESULTS,
+    LUNR_INDEX_STATE_SUCCESS
     } from './constants.js';
 
 function UnreconizedActionTypeException(message) {
@@ -130,68 +129,6 @@ function isInt(number) {
   } else {
     return true
   }
-}
-
-function prettifyResults(_query, results) {
-  var queries = _query.split(" ");
-  var arr;
-
-
-  const checkWord = (word) => {
-    return (new RegExp(`${_query}`, 'i')).test(word)
-  };
-
-  const alterText = (query, word) => {
-    var escape = query.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
-    var tagStr = '{tag}$&{tag}';
-    const markTag = '**';
-    const caseSensitive = false
-
-    return word.replace(
-        RegExp(escape, caseSensitive ? 'g' : 'gi'),
-        tagStr.replace(/{tag}/gi, markTag)
-    );
-  };
-
-  return results.map((result) => {
-    //console.log('res is', res);
-    var newObj = {};
-    Object.keys(result).forEach((key) => {
-
-      if (Array.isArray(result[key])) {
-
-        result[key].forEach((el) => {
-
-
-          if (checkWord(el)) {
-            console.log('key is', key);
-
-            /* Already an array in newObject? */
-            if (Array.isArray(newObj[key])) {
-              const newWord = alterText(_query, el);
-              newObj[key] = newWord
-            } else {
-              const newWord = alterText(_query, el);
-              newObj[key] = newWord
-            }
-          }
-        })
-      }
-
-      if (!Array.isArray(result[key]) && checkWord(result[key])) {
-        const newString = alterText(_query, result[key])
-
-        newObj[key] = newString
-      } else {
-        newObj[key] = result[key]
-      }
-    })
-
-    console.log('newObject', newObj);
-
-    return newObj
-
-  });
 }
 
 export const SEARCH_LUNR = Symbol('Lunr Search');
