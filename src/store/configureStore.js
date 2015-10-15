@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import createLunrMiddleware from '../lunr/middleware'
+import {createLunrMiddleware, prettyResults} from '../lunr/middleware'
 import reducer from '../reducer';
 import lunr from 'lunr';
 import createLogger from 'redux-logger';
@@ -25,14 +25,18 @@ const options = {
     city: {},
     types: {}
   },
-  reducer: "profiles",
-  entity: "profiles",
+  store: {
+    existingStore: false,
+    reducer: "profiles",
+    entity: "profiles"
+  },
   background: true
 };
 
 const createStoreWithMiddleware = applyMiddleware(
     thunk,
     createLunrMiddleware(options),
+    prettyResults(),
     logger
 )(createStore);
 

@@ -28,6 +28,7 @@ export default function lunr(state = {
         loadingStarted: false,
         loadingError: false,
         loadingSuccess: true,
+        searchIndex: action.searchIndex,
         docs: action.docs
       });
     case LUNR_INDEX_STATE:
