@@ -1,7 +1,7 @@
 {
-  "name": "react-tdd-tape",
-  "version": "0.0.1",
-  "description": "Testing React with Tape",
+  "name": "redux-lunr",
+  "version": "0.1.0",
+  "description": "Lunr.js as middleware for Redux",
   "main": "index.js",
   "directories": {
     "test": "tests"
