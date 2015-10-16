@@ -6,7 +6,7 @@ var path = require('path');
 module.exports = {
   module: {
     loaders: [
-      { test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/ }
+      {test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/}
     ],
     postLoaders: [{
       test: /.wrk\.js$/,
@@ -20,5 +20,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js']
-  }
+  },
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development')
+    })
+  ]
 };
