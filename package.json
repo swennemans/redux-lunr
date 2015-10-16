@@ -1,6 +1,6 @@
 {
   "name": "redux-lunr",
-  "version": "0.1.5",
+  "version": "0.1.7-beta.1",
   "description": "Lunr.js as middleware for Redux",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -13,16 +13,20 @@
   "scripts": {
     "clean": "rm -rf dist && rm -rf lib",
     "build:lib": "babel src --out-dir lib",
-    "build:umd": "webpack src/index.js dist/reduxLunr.js --config webpack.config.development.js",
+    "build:umd": "webpack src/index.js dist/reduxLunr.js --config webpack.config.production.js",
     "build:umd:min": "webpack src/index.js dist/reduxLunr.min.js --config webpack.config.production.js",
     "build": "npm run build:lib && npm run build:umd",
     "test-dev": "NODE_ENV=test babel-node ./test/*.js | faucet",
     "prepublish": "npm run clean && npm run build",
     "watch": "npm-watch",
-    "watch-test": "npm run watch -s"
+    "test": "npm run watch -s"
   },
   "author": "Sven Roeterdink <sven.roeterdink1@gmail.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swennemans/redux-lunr/issues"
+  },
+  "homepage": "https://github.com/swennemans/redux-lunr",
   "peerDependencies": {
     "lunr": "^0.5.12"
   },
@@ -43,10 +47,5 @@
         "*.js"
       ]
     }
-  ],
-  "dependencies": {
-    "babel-core": "^5.8.25",
-    "babel-loader": "^5.3.2",
-    "lunr": "^0.5.12"
-  }
+  ]
 }
