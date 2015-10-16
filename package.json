@@ -11,7 +11,7 @@
     "test-dev": "*.test.js"
   },
   "scripts": {
-    "clean": "$(npm bin)/rimraf lib dist",
+    "clean": "rm -rf dist && rm -rf lib",
     "build:lib": "babel src --out-dir lib",
     "build:umd": "webpack src/index.js dist/reduxLunr.js --config webpack.config.development.js",
     "build:umd:min": "webpack src/index.js dist/reduxLunr.min.js --config webpack.config.production.js",
