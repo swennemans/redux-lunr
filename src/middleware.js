@@ -1,4 +1,4 @@
-var Worker = require("./worker.wrk.js");
+var Worker = require("worker!./worker.wrk.js");
 
 import lunr from 'lunr';
 
