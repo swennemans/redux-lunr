@@ -1,6 +1,6 @@
 {
   "name": "redux-lunr",
-  "version": "0.1.7-beta.1",
+  "version": "0.1.9",
   "description": "Lunr.js as middleware for Redux",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",

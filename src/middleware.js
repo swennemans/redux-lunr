@@ -1,5 +1,4 @@
 var Worker = require("./worker.wrk.js");
-var worker = new Worker();
 
 import lunr from 'lunr';
 
@@ -63,6 +62,7 @@ function addToIndex(_toIndex, options) {
 
         }
         else if (background) {
+          var worker = new Worker();
           worker.onmessage = (e) => {
             resolve(lunr.Index.load(JSON.parse(e.data)));
           };
