@@ -1,7 +1,7 @@
-//import lunr from 'lunr';
+import lunr from 'lunr';
 
-onmessage = function(event) {
-  var lunr = require('lunr');
+self.onmessage = function(event) {
+  //var lunr = require('lunr');
 
   const {options: {index}, _toIndex} = JSON.parse(event.data);
 

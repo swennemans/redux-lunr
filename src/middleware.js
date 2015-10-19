@@ -1,4 +1,4 @@
-var Worker = require("worker!./worker.wrk.js");
+
 
 import lunr from 'lunr';
 
@@ -54,6 +54,7 @@ function addToIndex(_toIndex, options) {
   return new Promise(
       (resolve, reject) => {
         if (!background) {
+    try {
           let idx = createLunrIndex(options);
           _toIndex.forEach((doc) => {
             idx.add(doc)
@@ -61,12 +62,17 @@ function addToIndex(_toIndex, options) {
           resolve(idx)
 
         }
+  catch(e) {
+    throw new Error('Redux-Lunr: Error while indexing. Did you pass an array of valid objects?')
+  }
+}
         else if (background) {
-          var worker = new Worker();
-          worker.onmessage = (e) => {
-            resolve(lunr.Index.load(JSON.parse(e.data)));
-          };
-          worker.postMessage(JSON.stringify({options, _toIndex}))
+  //var Worker = require("./worker.wrk.js");
+  //        var worker = new Worker();
+  //        worker.onmessage = (e) => {
+  //          resolve(lunr.Index.load(JSON.parse(e.data)));
+  //        };
+  //        worker.postMessage(JSON.stringify({options, _toIndex}))
         } else {
           reject({err: "Redux-Lunr: unknow indexing option passed"})
         }
@@ -133,7 +139,7 @@ function isInt(number) {
 
 export const SEARCH_LUNR = Symbol('Lunr Search');
 
-export function createLunrMiddleware(options) {
+export default function createLunrMiddleware(options) {
 
   return function({dispatch, getState}) {
     return next => action => {
@@ -143,6 +149,7 @@ export function createLunrMiddleware(options) {
       if (typeof searchLunr === 'undefined') {
         return next(action);
       }
+
 
       const {_toIndex, _query, _limit, type, ...rest} = searchLunr;
       if (!_toIndex instanceof Array) {
@@ -186,7 +193,7 @@ export function createLunrMiddleware(options) {
           next(actionWith(searchLunr));
 
           addToIndex(getDataFromState(options, getState), options)
-              .then((res) => {x
+              .then((res) => {
                 dispatch({
                   type: LUNR_INDEX_STATE_SUCCESS,
                   searchIndex: res

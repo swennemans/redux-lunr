@@ -10,6 +10,7 @@ import {
 export default function lunr(state = {
   docs: [],
   results: [],
+  query: "",
   loadingStarted: false,
   loadingError: false,
   loadingSuccess: false,
@@ -44,6 +45,7 @@ export default function lunr(state = {
       });
     case LUNR_SEARCH_START:
       return Object.assign({}, state, {
+        query: action._query,
         isSearching: true
       });
     case LUNR_SEARCH_SUCCESS:

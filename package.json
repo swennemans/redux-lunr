@@ -47,5 +47,8 @@
         "*.js"
       ]
     }
-  ]
+  ],
+  "dependencies": {
+    "worker-loader": "^0.6.0"
+  }
 }

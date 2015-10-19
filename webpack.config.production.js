@@ -11,7 +11,7 @@ module.exports = {
     postLoaders: [{
       test: /.wrk\.js$/,
       include: path.join(__dirname, 'src'),
-      loaders: ['worker-loader'],
+      loader: 'worker-loader',
     }]
   },
   output: {
