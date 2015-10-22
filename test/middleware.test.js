@@ -24,8 +24,7 @@ const options = {
     existingStore: false,
     reducer: "profiles",
     entity: "profiles"
-  },
-  background: false
+  }
 };
 
 const setup = (options) => {

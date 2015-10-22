@@ -1,5 +1,3 @@
-
-
 import lunr from 'lunr';
 
 import {
@@ -8,8 +6,9 @@ import {
     LUNR_INDEX_DOCS_SUCCESS,
     LUNR_SEARCH_START,
     LUNR_SEARCH_SUCCESS,
-    LUNR_INDEX_STATE_SUCCESS
-    } from './constants.js';
+    LUNR_INDEX_STATE_SUCCESS,
+    LUNR_SEARCH_RESET
+} from './constants.js';
 
 function UnreconizedActionTypeException(message) {
   this.message = message;
@@ -22,9 +21,6 @@ function UnreconizedActionTypeException(message) {
  */
 function getDataFromState(options, getState) {
   const {reducer, entity} = options.store;
-
-  console.log(getState()[reducer][entity]);
-
   return getState()[reducer][entity];
 }
 
@@ -34,7 +30,6 @@ function createLunrIndex(options) {
   return lunr(function() {
     Object.keys(index).forEach((key) => {
       if (key === 'ref') {
-        console.log('key is', index[key]);
         this.ref(index[key])
       } else {
         this.field(key, index[key])
@@ -44,39 +39,18 @@ function createLunrIndex(options) {
 }
 
 /* addToIndex creates an index based on the documents passed saved in _toIndex
- * options has background var with true/false. If true, index will be created in background thread
- * default is false.
  */
 function addToIndex(_toIndex, options) {
-  const {background} = options;
-
-  /* Wrap in promise because webworker returns async */
-  return new Promise(
-      (resolve, reject) => {
-        if (!background) {
-    try {
-          let idx = createLunrIndex(options);
-          _toIndex.forEach((doc) => {
-            idx.add(doc)
-          });
-          resolve(idx)
-
-        }
-  catch(e) {
+  let idx;
+  try {
+    idx = createLunrIndex(options);
+    _toIndex.forEach((doc) => {
+      idx.add(doc)
+    })
+  } catch (e) {
     throw new Error('Redux-Lunr: Error while indexing. Did you pass an array of valid objects?')
   }
-}
-        else if (background) {
-  //var Worker = require("./worker.wrk.js");
-  //        var worker = new Worker();
-  //        worker.onmessage = (e) => {
-  //          resolve(lunr.Index.load(JSON.parse(e.data)));
-  //        };
-  //        worker.postMessage(JSON.stringify({options, _toIndex}))
-        } else {
-          reject({err: "Redux-Lunr: unknow indexing option passed"})
-        }
-      })
+  return idx;
 }
 
 
@@ -128,7 +102,7 @@ function flatten(results) {
 
 function isInt(number) {
   if (typeof number === 'string') {
-   return true
+    return true
   }
   else if (!isNaN(number)) {
     return number % 1 !== 0
@@ -149,6 +123,8 @@ export default function createLunrMiddleware(options) {
       if (typeof searchLunr === 'undefined') {
         return next(action);
       }
+
+
 
 
       const {_toIndex, _query, _limit, type, ...rest} = searchLunr;
@@ -177,30 +153,24 @@ export default function createLunrMiddleware(options) {
         case  LUNR_INDEX_DOCS:
           next(actionWith(searchLunr));
 
-          addToIndex(_toIndex, options).then((value) => {
-            console.log('succes', value);
-            //let docs = addToStore(value)
-            dispatch({
-              type: LUNR_INDEX_DOCS_SUCCESS,
-              searchIndex: value,
-              docs: _toIndex
-            });
-          }).catch((err) => {
-            throw new Error(err)
+          /* Create and save searchIndex */
+          const docsSearchIndex = addToIndex(_toIndex, options);
+          dispatch({
+            type: LUNR_INDEX_DOCS_SUCCESS,
+            searchIndex: docsSearchIndex,
+            docs: _toIndex
           });
           break;
         case  LUNR_INDEX_STATE:
           next(actionWith(searchLunr));
 
-          addToIndex(getDataFromState(options, getState), options)
-              .then((res) => {
-                dispatch({
-                  type: LUNR_INDEX_STATE_SUCCESS,
-                  searchIndex: res
-                });
-              }).catch((err) => {
-                throw new Error(err)
-              });
+          /* Create and save searchIndex */
+          const stateSearchIndex = addToIndex(getDataFromState(options, getState), options);
+          dispatch({
+            type: LUNR_INDEX_STATE_SUCCESS,
+            searchIndex: stateSearchIndex
+          });
+
           break;
         case LUNR_SEARCH_START:
           next(actionWith(searchLunr));
@@ -214,6 +184,9 @@ export default function createLunrMiddleware(options) {
             query: _query
           });
 
+          break;
+        case LUNR_SEARCH_RESET:
+            next(actionWith(searchLunr));
           break;
         default:
           throw new UnreconizedActionTypeException('Unknown action, ' + type);

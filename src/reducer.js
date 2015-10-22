@@ -4,7 +4,8 @@ import {
     LUNR_INDEX_DOCS_SUCCESS,
     LUNR_SEARCH_START,
     LUNR_SEARCH_SUCCESS,
-    LUNR_INDEX_STATE_SUCCESS
+    LUNR_INDEX_STATE_SUCCESS,
+    LUNR_SEARCH_RESET
     } from './constants.js';
 
 export default function lunr(state = {
@@ -52,6 +53,11 @@ export default function lunr(state = {
       return Object.assign({}, state, {
         isSearching: false,
         results: action.results
+      });
+    case LUNR_SEARCH_RESET:
+      return Object.assign({}, state, {
+        isSearching: false,
+        results: []
       });
     default:
       return state;

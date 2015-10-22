@@ -7,12 +7,7 @@ module.exports = {
   module: {
     loaders: [
       {test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/}
-    ],
-    postLoaders: [{
-      test: /.wrk\.js$/,
-      include: path.join(__dirname, 'src'),
-      loader: 'worker-loader',
-    }]
+    ]
   },
   output: {
     library: 'ReduxLunr',

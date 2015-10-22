@@ -1,7 +1,8 @@
 import {
     loadDocsIntoIndex,
     loadStateIntoIndex,
-    lunrStartSearch
+    lunrStartSearch,
+    lunrResetSearchResults
     } from './actions.js'
 
 import createLunrMiddleware from './middleware.js';
@@ -11,6 +12,7 @@ export {
     loadDocsIntoIndex,
     loadStateIntoIndex,
     lunrStartSearch,
+    lunrResetSearchResults,
     createLunrMiddleware,
     lunrReducer
     }
