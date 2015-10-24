@@ -9,32 +9,24 @@ import {SEARCH_LUNR} from './middleware.js'
 
 export function loadDocsIntoIndex(docs) {
   return {
-    [SEARCH_LUNR]: {
       type: LUNR_INDEX_DOCS,
       _toIndex: docs
-    }
   }
 }
 export function loadStateIntoIndex(state) {
   return {
-    [SEARCH_LUNR]: {
       type: LUNR_INDEX_STATE
     }
-  }
 }
 export function lunrStartSearch(query, limit) {
   return {
-    [SEARCH_LUNR]: {
       type: LUNR_SEARCH_START,
       _query: query ? query: false,
       _limit: limit ? limit: false
-    }
   }
 }
 export function lunrResetSearchResults() {
   return {
-    [SEARCH_LUNR]: {
       type: LUNR_SEARCH_RESET
-    }
   }
 }

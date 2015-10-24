@@ -111,25 +111,25 @@ function isInt(number) {
   }
 }
 
-export const SEARCH_LUNR = Symbol('Lunr Search');
+export const SEARCH_LUNR = '@@REDUX_LUNR/';
 
 export default function createLunrMiddleware(options) {
 
   return function({dispatch, getState}) {
     return next => action => {
 
-
-      const searchLunr = action[SEARCH_LUNR];
-      if (typeof searchLunr === 'undefined') {
+      if (action.type.indexOf(SEARCH_LUNR) == -1) {
         return next(action);
       }
 
-
-
+      const searchLunr = action;
 
       const {_toIndex, _query, _limit, type, ...rest} = searchLunr;
       if (!_toIndex instanceof Array) {
         throw new Error('Redux-Lunr: passed documents must be an array of objects')
+      }
+      if (_toIndex !== undefined && !_toIndex.length > 0) {
+        throw new Error('Redux-Lunr: passed documents array is empty')
       }
       if (_query !== undefined && typeof _query !== 'string') {
         throw new Error('Redux-Lunr: search query must be a string!')
@@ -142,43 +142,37 @@ export default function createLunrMiddleware(options) {
         throw new Error('Redux-Lunr: if using existing Redux Store please define a reducer and an entity')
       }
 
-      function actionWith(data) {
-        const finalAction = Object.assign({}, action, data);
-        delete finalAction[SEARCH_LUNR];
-        return finalAction;
-      }
-
-
       switch (type) {
         case  LUNR_INDEX_DOCS:
-          next(actionWith(searchLunr));
+          next(searchLunr);
 
           /* Create and save searchIndex */
           const docsSearchIndex = addToIndex(_toIndex, options);
-          dispatch({
+          next({
             type: LUNR_INDEX_DOCS_SUCCESS,
             searchIndex: docsSearchIndex,
             docs: _toIndex
           });
           break;
         case  LUNR_INDEX_STATE:
-          next(actionWith(searchLunr));
+          next(searchLunr);
 
           /* Create and save searchIndex */
           const stateSearchIndex = addToIndex(getDataFromState(options, getState), options);
-          dispatch({
+
+          next({
             type: LUNR_INDEX_STATE_SUCCESS,
             searchIndex: stateSearchIndex
-          });
+          })
 
           break;
         case LUNR_SEARCH_START:
-          next(actionWith(searchLunr));
+          next(searchLunr);
           let results = options.store.existingStore ?
               retrieveResultsFromState(getState, options, doLunrSearch(getState, _query)) :
               retrieveResultsFromStore(getState, doLunrSearch(getState, _query));
 
-          dispatch({
+          next({
             type: LUNR_SEARCH_SUCCESS,
             results: _limit ? results.slice(0, _limit) : results,
             query: _query
@@ -186,7 +180,7 @@ export default function createLunrMiddleware(options) {
 
           break;
         case LUNR_SEARCH_RESET:
-            next(actionWith(searchLunr));
+          next(searchLunr);
           break;
         default:
           throw new UnreconizedActionTypeException('Unknown action, ' + type);

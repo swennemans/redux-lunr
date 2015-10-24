@@ -8,6 +8,8 @@ import {
     LUNR_SEARCH_RESET
     } from './constants.js';
 
+import { SEARCH_LUNR } from './middleware.js'
+
 export default function lunr(state = {
   docs: [],
   results: [],
@@ -23,7 +25,7 @@ export default function lunr(state = {
       return Object.assign({}, state, {
         loadingStarted: true,
         loadingError: true,
-        loadingSuccess: true,
+        loadingSuccess: true
       });
     case LUNR_INDEX_DOCS_SUCCESS:
       return Object.assign({}, state, {

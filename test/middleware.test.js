@@ -1,198 +1,182 @@
 import test from 'tape';
-//import btest from 'blue-tape';
-import * as types from '../constants.js';
+import * as types from '../src/constants.js';
 import sinon from 'sinon';
-import {createLunrMiddleware} from '../middleware.js';
-import {SEARCH_LUNR} from '../middleware.js'
+import createLunrMiddleware from '../src/middleware.js';
+import {SEARCH_LUNR} from '../src/middleware.js'
 
 import {
     loadDocsIntoIndex,
     loadStateIntoIndex
     }
-    from '../actions.js'
+    from '../src/actions.js'
 
-const options = {
-  index: {
-    ref: 'id',
-    name: {boost: 10},
-    bio: {},
-    interesses: {},
-    city: {},
-    types: {}
-  },
-  store: {
-    existingStore: false,
-    reducer: "profiles",
-    entity: "profiles"
-  }
-};
-
-const setup = (options) => {
-  let baseDispatch = sinon.spy();
-  let dispatch = function dis(action) {
-    const methods = {
-      dispatch: dis, getState: () => {
-      }
-    };
-    return createLunrMiddleware(options)(methods)(baseDispatch)(action);
-  };
-
+const getStore = (state) => {
   return {
-    baseDispatch,
-    dispatch
+    getState: sinon.stub().returns(state || {}),
+    dispatch: sinon.spy()
   };
 };
 
-const symbolizeAction = (action) => {
+const getState = () => {
   return {
-    [SEARCH_LUNR] : action
-  }
-}
-
-
-//test('It should return a middleware function', (t) => {
-//  t.ok(typeof createLunrMiddleware() === 'function');
-//  t.end()
-//});
-
-//
-//test('It should pass correct action', (t) => {
-//  const options = {
-//    index: {
-//      ref: 'id',
-//      name: {boost: 10},
-//      bio: {},
-//      interesses: {},
-//      city: {},
-//      types: {}
-//    },
-//    reducer: "profiles",
-//    entity: "profiles",
-//    background: false
-//  };
-//
-//  const {baseDispatch, dispatch} = setup(options);
-//  const _toIndex = [
-//    {id: "1", header: "Header 1", body: "body 1"},
-//    {id: "2", header: "Header 2", body: "body 2"},
-//    {id: "3", header: "Header 3", body: "body 3"}
-//  ];
-//
-//  const expected = {
-//    type: types.LUNR_INDEX_DOCS,
-//    _toIndex
-//  };
-//
-//  dispatch(loadDocsIntoIndex(_toIndex));
-//  t.ok(typeof baseDispatch === 'function')
-//  t.deepEqual(baseDispatch.firstCall.args[0], expected)
-//
-//  t.end()
-//});
-
-test('LunrSearch should work correctly', t => {
-  const state = {
     lunr: {
       searchIndex: {
-        search: function() {return [{name: "Sven", bio: "ab"}]}
+        search: function() {
+          return [{name: "Sven", bio: "ab"}]
+        }
       },
       docs: [{name: "Sven", bio: "ab"}, {name: "Tesla", bio: "ad"}]
     }
+  }
+}
+
+const getOptions = () => {
+  return {
+    index: {
+      ref: 'id',
+      name: {boost: 10},
+      bio: {},
+      interesses: {},
+      city: {},
+      types: {}
+    },
+    store: {
+      existingStore: false,
+      reducer: "profiles",
+      entity: "profiles"
+    }
   };
-  const store = {
-    getState: sinon.stub().returns(state),
-    dispatch: sinon.spy()
-  };
+}
+
+test('Middleware should return a (middleware) function', (t) => {
+  t.ok(typeof createLunrMiddleware() === 'function');
+  t.end()
+});
+
+test('Middleware only processes actions prefixed with @@REDUX_LUNR/', (t) => {
+  const store = getStore();
+  const next = sinon.spy();
+
+  const result = createLunrMiddleware({})(store)(next)({
+    type: "FOO_BAR"
+  });
+
+  t.equal(next.firstCall.args[0].type, "FOO_BAR", "Non redux-lunr action should be nexted");
+  t.end()
+});
+
+test('Search should work correctly', t => {
+
+  const options = getOptions();
+  const state = getState()
+  const store = getStore(state);
   const next = sinon.spy();
 
   const _query = "sv";
   const _limit = 1;
 
 
-  const result = createLunrMiddleware(options)(store)(next)(symbolizeAction({
+  const result = createLunrMiddleware(options)(store)(next)({
     type: types.LUNR_SEARCH_START,
     _query,
     _limit
-  }));
+  });
 
 
-  t.equal(store.dispatch.firstCall.args[0].type, types.LUNR_SEARCH_SUCCESS, "Next action should be called");
-  t.equal(store.dispatch.firstCall.args[0].results.length, _limit, "Returned results should be limited");
+  t.equal(next.firstCall.args[0].type, types.LUNR_SEARCH_START, "SEARCH_START should be send to reducer");
+  t.equal(next.secondCall.args[0].type, types.LUNR_SEARCH_SUCCESS, "SEARCH_SUCCESS should be send to reducer");
+  t.equal(next.secondCall.args[0].results.length, _limit, "Returned results should be limited");
 
   t.end()
 
 });
 
 test("Middleware should throw errors", t => {
-  const state = {
-    lunr: {
-      searchIndex: {
-        search: function() {return [{name: "Sven", bio: "ab"}]}
-      },
-      docs: [{name: "Sven", bio: "ab"}, {name: "Tesla", bio: "ad"}]
-    }
-  };
-  const store = {
-    getState: sinon.stub().returns(state),
-    dispatch: sinon.spy()
-  };
+  const state = getState()
+  const store = getStore(state);
   const next = sinon.spy();
+  const options = getOptions();
 
+  t.plan(6);
+  try {
+    createLunrMiddleware(options)(store)(next)({
+      type: types.LUNR_INDEX_DOCS,
+      _toIndex: []
+    });
+  }
+  catch(e) {
+    t.ok(e instanceof Error, "Throw error when: passed documents array is empty");
+  }
 
   try {
-    createLunrMiddleware(options)(store)(next)(symbolizeAction({
+    createLunrMiddleware(options)(store)(next)({
       type: types.LUNR_SEARCH_START,
       _query: 12,
       _limit: 1
-    }));
+    });
   }
   catch(e) {
-    t.ok(e instanceof Error, "Query can't be an integer");
+    t.ok(e instanceof Error, "Throw error when: query is an integer");
   }
 
   try {
-    createLunrMiddleware(options)(store)(next)(symbolizeAction({
+    createLunrMiddleware(options)(store)(next)({
       type: types.LUNR_SEARCH_START,
-      _query: ["lol"],
+      _query: ["foo"],
       _limit: 1
-    }));
+    });
   }
   catch(e) {
-    t.ok(e instanceof Error, "Query can't be an array");
+    t.ok(e instanceof Error, "Throw error when: query is a an array");
   }
 
   try {
-    createLunrMiddleware(options)(store)(next)(symbolizeAction({
+    createLunrMiddleware(options)(store)(next)({
       type: types.LUNR_SEARCH_START,
       _query: {1: "queryme"},
       _limit: 1
-    }));
+    });
   }
   catch(e) {
-    t.ok(e instanceof Error, "Query can't be an object");
+    t.ok(e instanceof Error, "Throw error when: when query is a an object");
   }
 
   try {
-    createLunrMiddleware(options)(store)(next)(symbolizeAction({
+    createLunrMiddleware(options)(store)(next)({
       type: types.LUNR_SEARCH_START,
       _query: "query",
       _limit: "5"
-    }));
+    });
   }
   catch(e) {
-    t.ok(e instanceof Error, "Limit can't be a string");
+    t.ok(e instanceof Error, "Throw error when: Limit is a string");
   }
-
   try {
-    createLunrMiddleware(options)(store)(next)(symbolizeAction({
+    createLunrMiddleware(options)(store)(next)({
       type: types.LUNR_SEARCH_START,
       _query: "query",
       _limit: 1.5
-    }));
+    });
   }
   catch(e) {
-    t.ok(e instanceof Error, "Limit can't be float");
+    t.ok(e instanceof Error, "Throw error when: limit is a float");
   }
-  t.end()
 });
 
+
+test("Loading passed array of docs should work properly", t => {
+
+  const options = getOptions();
+  const state = getState();
+  const store = getStore(state);
+  const next = sinon.spy();
+
+  createLunrMiddleware(options)(store)(next)({
+    type: types.LUNR_INDEX_DOCS,
+    _toIndex: [{}, {}, {}]
+  });
+
+  t.equal(next.firstCall.args[0].type, types.LUNR_INDEX_DOCS, "LUNR_INDEX_DOCS should be send to reducer")
+  t.equal(next.secondCall.args[0].type, types.LUNR_INDEX_DOCS_SUCCESS, "LUNR_INDEX_DOCS_SUCCESS should be send to reducer")
+  t.end()
+});

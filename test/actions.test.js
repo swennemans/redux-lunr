@@ -1,7 +1,6 @@
 import test from 'tape';
-import * as actions from '../actions.js'
-import * as types from '../constants.js';
-import {SEARCH_LUNR} from '../middleware.js'
+import * as actions from '../src/actions.js'
+import * as types from '../src/constants.js';
 
 test('It should return correct actions', (t) => {
 
@@ -12,28 +11,27 @@ test('It should return correct actions', (t) => {
   ];
 
   const expectedActionIndexDocs = {
-    [SEARCH_LUNR] : {
       type: types.LUNR_INDEX_DOCS,
       _toIndex
-    }
   };
 
   const expectedActionIndexState = {
-    [SEARCH_LUNR] : {
       type: types.LUNR_INDEX_STATE,
-    }
   };
 
   const expectedActionSearch = {
-    [SEARCH_LUNR] : {
       type: types.LUNR_SEARCH_START,
       _query: "query",
       _limit: 10
-    }
   };
 
-  t.deepEqual(actions.loadDocsIntoIndex(_toIndex)[SEARCH_LUNR], expectedActionIndexDocs[SEARCH_LUNR], "loadDocsIntoIndex should return correct action");
-  t.deepEqual(actions.loadStateIntoIndex()[SEARCH_LUNR], expectedActionIndexState[SEARCH_LUNR], "loadStateIntoIndex should return correct action");
-  t.deepEqual(actions.lunrStartSearch("query", 10)[SEARCH_LUNR], expectedActionSearch[SEARCH_LUNR], "lunrStartSearch should return correct action");
+  const expectedActionResetSearchResults = {
+    type: types.LUNR_SEARCH_RESET
+  };
+
+  t.deepEqual(actions.loadDocsIntoIndex(_toIndex), expectedActionIndexDocs, "loadDocsIntoIndex should return correct action");
+  t.deepEqual(actions.loadStateIntoIndex(), expectedActionIndexState, "loadStateIntoIndex should return correct action");
+  t.deepEqual(actions.lunrStartSearch("query", 10), expectedActionSearch, "lunrStartSearch should return correct action");
+  t.deepEqual(actions.lunrResetSearchResults(), expectedActionResetSearchResults, "lunrResetSearchResults should return correct action");
   t.end()
 });
