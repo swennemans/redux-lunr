@@ -13,7 +13,7 @@ const getInitialState = () => {
     query: '',
     searchIndex: undefined
   };
-}
+};
 
 test('Reducer should return default state', (t) => {
   t.deepEqual(reducer(undefined, {}), getInitialState())

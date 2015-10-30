@@ -25,6 +25,11 @@ test('It should return correct actions', (t) => {
       _limit: 10
   };
 
+  const expectedActionLoadPreparedIndex = {
+    type: types.LUNR_LOAD_SEARCH_INDEX,
+    _index: "{}"
+  };
+
   const expectedActionResetSearchResults = {
     type: types.LUNR_SEARCH_RESET
   };
@@ -33,5 +38,6 @@ test('It should return correct actions', (t) => {
   t.deepEqual(actions.loadStateIntoIndex(), expectedActionIndexState, "loadStateIntoIndex should return correct action");
   t.deepEqual(actions.lunrStartSearch("query", 10), expectedActionSearch, "lunrStartSearch should return correct action");
   t.deepEqual(actions.lunrResetSearchResults(), expectedActionResetSearchResults, "lunrResetSearchResults should return correct action");
+  t.deepEqual(actions.loadPreparedIndexIntoIndex("{}"), expectedActionLoadPreparedIndex, "loadPreparedIndexIntoIndex should return correct action");
   t.end()
 });

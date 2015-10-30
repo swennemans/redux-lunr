@@ -7,7 +7,9 @@ import {
     LUNR_SEARCH_START,
     LUNR_SEARCH_SUCCESS,
     LUNR_INDEX_STATE_SUCCESS,
-    LUNR_SEARCH_RESET
+    LUNR_SEARCH_RESET,
+    LUNR_LOAD_SEARCH_INDEX,
+    LUNR_LOAD_SEARCH_INDEX_SUCCESS
 } from './constants.js';
 
 function UnreconizedActionTypeException(message) {
@@ -37,7 +39,6 @@ function createLunrIndex(options) {
     })
   });
 }
-
 /* addToIndex creates an index based on the documents passed saved in _toIndex
  */
 function addToIndex(_toIndex, options) {
@@ -88,7 +89,6 @@ function retrieveResultsFromState(getState, options, results) {
         return doc.id === result.ref
       })
     }));
-
   } else {
     return []
   }
@@ -124,7 +124,7 @@ export default function createLunrMiddleware(options) {
 
       const searchLunr = action;
 
-      const {_toIndex, _query, _limit, type, ...rest} = searchLunr;
+      const {_toIndex, _query, _limit, type, _index, ...rest} = searchLunr;
       if (!_toIndex instanceof Array) {
         throw new Error('Redux-Lunr: passed documents must be an array of objects')
       }
@@ -137,6 +137,9 @@ export default function createLunrMiddleware(options) {
       if (_limit !== undefined && isInt(_limit)) {
         throw new Error('Redux-Lunr: search limit must be an integer!')
       }
+      //if ( _index !== undefined && ) {
+      //  throw new Error('Redux-Lunr: search limit must be an integer!')
+      //}
 
       if (options.store.existingStore && (options.store.reducer === undefined || options.store.entity === undefined)) {
         throw new Error('Redux-Lunr: if using existing Redux Store please define a reducer and an entity')
@@ -163,8 +166,7 @@ export default function createLunrMiddleware(options) {
           next({
             type: LUNR_INDEX_STATE_SUCCESS,
             searchIndex: stateSearchIndex
-          })
-
+          });
           break;
         case LUNR_SEARCH_START:
           next(searchLunr);
@@ -177,7 +179,13 @@ export default function createLunrMiddleware(options) {
             results: _limit ? results.slice(0, _limit) : results,
             query: _query
           });
-
+          break;
+        case LUNR_LOAD_SEARCH_INDEX:
+          next(searchLunr);
+            next({
+              type: LUNR_LOAD_SEARCH_INDEX_SUCCESS,
+              searchIndex: lunr.index.load(JSON.parse(_index))
+            });
           break;
         case LUNR_SEARCH_RESET:
           next(searchLunr);

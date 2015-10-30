@@ -28,7 +28,7 @@ const getState = () => {
       docs: [{name: "Sven", bio: "ab"}, {name: "Tesla", bio: "ad"}]
     }
   }
-}
+};
 
 const getOptions = () => {
   return {
@@ -180,3 +180,4 @@ test("Loading passed array of docs should work properly", t => {
   t.equal(next.secondCall.args[0].type, types.LUNR_INDEX_DOCS_SUCCESS, "LUNR_INDEX_DOCS_SUCCESS should be send to reducer")
   t.end()
 });
+
