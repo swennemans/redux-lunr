@@ -39,10 +39,19 @@ function createLunrIndex(options) {
     })
   });
 }
+
+/* apply mapper function defined in options, useful when
+   you work with nested properties.
+ */
+function applyMapper(_toIndex, mapper) {
+  return _toIndex.map(mapper)
+}
+
 /* addToIndex creates an index based on the documents passed saved in _toIndex
  */
 function addToIndex(_toIndex, options) {
   let idx;
+
   try {
     idx = createLunrIndex(options);
     _toIndex.forEach((doc) => {
@@ -137,20 +146,25 @@ export default function createLunrMiddleware(options) {
       if (_limit !== undefined && isInt(_limit)) {
         throw new Error('Redux-Lunr: search limit must be an integer!')
       }
-      //if ( _index !== undefined && ) {
-      //  throw new Error('Redux-Lunr: search limit must be an integer!')
-      //}
-
+      if ( options.mapper !== undefined && typeof options.mapper !== 'function') {
+        throw new Error('Redux-Lunr: mapper function must be a valid function!')
+      }
       if (options.store.existingStore && (options.store.reducer === undefined || options.store.entity === undefined)) {
         throw new Error('Redux-Lunr: if using existing Redux Store please define a reducer and an entity')
       }
+
+      /* Check if there is a mapper function passed */
+      const needToMap = options.mapper !== undefined;
 
       switch (type) {
         case  LUNR_INDEX_DOCS:
           next(searchLunr);
 
           /* Create and save searchIndex */
-          const docsSearchIndex = addToIndex(_toIndex, options);
+          const docsSearchIndex = !needToMap ?
+              addToIndex(_toIndex, options) :
+              addToIndex( applyMapper(_toIndex, options.mapper), options);
+
           next({
             type: LUNR_INDEX_DOCS_SUCCESS,
             searchIndex: docsSearchIndex,
@@ -159,9 +173,10 @@ export default function createLunrMiddleware(options) {
           break;
         case  LUNR_INDEX_STATE:
           next(searchLunr);
-
           /* Create and save searchIndex */
-          const stateSearchIndex = addToIndex(getDataFromState(options, getState), options);
+          const stateSearchIndex = !needToMap ?
+              addToIndex( getDataFromState(options, getState), options ) :
+              addToIndex( applyMapper( getDataFromState(options, getState), options.mapper), options);
 
           next({
             type: LUNR_INDEX_STATE_SUCCESS,
