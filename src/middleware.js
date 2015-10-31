@@ -152,7 +152,6 @@ export default function createLunrMiddleware(options) {
       if (options.store.existingStore && (options.store.reducer === undefined || options.store.entity === undefined)) {
         throw new Error('Redux-Lunr: if using existing Redux Store please define a reducer and an entity')
       }
-
       /* Check if there is a mapper function passed */
       const needToMap = options.mapper !== undefined;
 
