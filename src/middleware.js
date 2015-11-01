@@ -127,7 +127,7 @@ export default function createLunrMiddleware(options) {
   return function({dispatch, getState}) {
     return next => action => {
 
-      if (action.type.indexOf(SEARCH_LUNR) == -1) {
+      if (action.type === undefined || action.type.indexOf(SEARCH_LUNR) == -1) {
         return next(action);
       }
 
