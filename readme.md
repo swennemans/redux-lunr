@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/swennemans/redux-lunr/master/assets/example.gif)
+![](https://raw.githubusercontent.com/swennemans/redux-lunr/master/example.gif)
 
 # redux-lunr
 
