@@ -27,7 +27,7 @@
     "url": "https://github.com/swennemans/redux-lunr/issues"
   },
   "homepage": "https://github.com/swennemans/redux-lunr",
-  "peerDependencies": {
+  "dependencies": {
     "lunr": "^0.6.0"
   },
   "devDependencies": {
